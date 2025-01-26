@@ -22,29 +22,31 @@ def directional_gaussian_kernel(matrix_shape: tuple, is_descending: bool) -> np.
     y_shift = height//4 if is_descending else -height//4
     return np.exp(-(x**2/(width/3.5)**2 + (y-y_shift)**2/(height/3.5)**2))
 
-def apply_wear(step_matrix: np.ndarray, is_descending: bool, material_params: dict) -> np.ndarray:
+def apply_wear(step_matrix: np.ndarray, is_descending: bool) -> np.ndarray:
     """Improved wear application with stronger erosion effect"""
-    kernel = directional_gaussian_kernel(step_matrix.shape, is_descending)
 
+    if step_matrix.size == 0:
+        return step_matrix
+    
+    kernel = directional_gaussian_kernel(step_matrix.shape, is_descending)
     # Normalize but prevent excessive dilution of wear
     kernel /= np.max(kernel)  # Use max instead of sum to retain impact
 
     # Increase wear depth calculation
     wear_mm = archard_wear_factor(
-        step_hardness_pa=material_params['step_hardness_pa'],
+        step_hardness_pa=1e9,
         is_descending=is_descending,
-        archard_k=material_params['archard_k']
-    ) * 1000  # Increase factor from 1000 to 1e6 to amplify effect
+        archard_k=1e-4 
+    ) * 50000000  # Increase factor from 1000 to 1e6 to amplify effect
     
     step_matrix -= kernel * wear_mm
-    return np.clip(step_matrix, 0, None)
+    return np.clip(step_matrix, 0, np.inf, out=step_matrix)
 
 # ==============================
 # SIMULATION CONTROL FUNCTIONS
 # ==============================
 
 def run_simulation(initial_matrix: np.ndarray, 
-                  material_params: dict,
                   requested_steps: list,
                   descent_ratio: float = 0.7) -> dict:
     """Run simulation and save requested steps"""
@@ -57,7 +59,7 @@ def run_simulation(initial_matrix: np.ndarray,
     for step in range(1, max_step + 1):
         # Randomly determine step direction
         is_descending = np.random.rand() < descent_ratio
-        current_matrix = apply_wear(current_matrix, is_descending, material_params)
+        current_matrix = apply_wear(current_matrix, is_descending)
         
         if step in requested_steps:
             results[step] = current_matrix.copy()
@@ -102,21 +104,8 @@ matrix_shape = (12, 7)
 # initial mm of material
 initial_height = 350.0               
 
-# Material properties
-materials = {
-    "Granite": {
-        'step_hardness_pa': 1e9,     # 6 GPa for granite
-        'archard_k': 1e-4           # Adjusted for stone/rubber wear
-    },
-    # "Limestone": {
-    #     'step_hardness_pa': 4e9,     # 4 GPa for limestone
-    #     'archard_k': 8e-5
-    # }
-}
 
 # Run simulation for each material
-for material_name, params in materials.items():
-    initial_matrix = np.full(matrix_shape, initial_height)
-    results = run_simulation(initial_matrix, params, requested_steps)
-    visualize_results(results, material_name)
-    
+# initial_matrix = np.full(matrix_shape, initial_height)
+# results = run_simulation(initial_matrix, requested_steps)
+# visualize_results(results, "granite")

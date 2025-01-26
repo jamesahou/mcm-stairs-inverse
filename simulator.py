@@ -9,7 +9,7 @@ def plot_step_profile(step_profile):
     step_profile_outlined[1:-1, 1:-1] = step_profile
     fig = plt.figure()
     xx, yy = np.mgrid[0:step_profile_outlined.shape[0], 0:step_profile_outlined.shape[1]]
-    ax = fig.gca(projection='3d')
+    ax = fig.add_subplot(projection = '3d')
     ax.set_xlim(-step_profile_outlined.shape[1] // 2 + 20, step_profile_outlined.shape[1] // 2 + 20)
     ax.set_ylim(-10, step_profile_outlined.shape[1]+10)
     ax.invert_xaxis()
@@ -45,7 +45,7 @@ def simulate(length, width, height, foot_dims, days, wear_fn, conditions):
         foot_xleft = int(np.clip(foot_xleft, 0, width-1))
         foot_xright = int(np.clip(foot_xright, 0, width-1))
 
-        wear_fn(step_profile[foot_ybottom:foot_ytop, foot_xleft:foot_xright])
+        wear_fn(step_profile[foot_ybottom:foot_ytop, foot_xleft:foot_xright], UP_FLAG)
 
         # if t % (20 * steps_per_day) == 0:
             # print("Day", t // steps_per_day)

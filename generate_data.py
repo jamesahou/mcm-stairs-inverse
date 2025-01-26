@@ -1,10 +1,10 @@
 from simulator import simulate, plot_step_profile
 import numpy as np
-from wear_fn import onepix_wear
+from wear_fn import apply_wear
 from utils import in2pix
 import time
 
-num_samples = 10
+num_samples = 2
 
 step_width = in2pix(60)
 step_tread = in2pix(15)
@@ -25,13 +25,13 @@ for i in range(num_samples):
     total_days = np.random.randint(50, 150)
 
     conditions = np.append(sampler_ps, steps_per_day)
-    profile = simulate(step_tread, step_width, step_rise, foot_dims, total_days, onepix_wear, conditions)
-    
+    profile = simulate(step_tread, step_width, step_rise, foot_dims, total_days, apply_wear, conditions)
+    steps.append(profile)
     np.save(f"data/profiles/profile_{i}.npy", profile)
     np.save(f"data/conditions/conditions_{i}.npy", conditions)
 
     if (i % 10 == 0):
         print(i)
 
-# plot_step_profile(np.concatenate(steps, axis=1))
+plot_step_profile(np.concatenate(steps, axis=1))
 print(time.time() - start)

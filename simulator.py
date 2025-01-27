@@ -57,15 +57,16 @@ def simulate(length, width, height, foot_dims, days, wear_fn, conditions):
 if __name__ == "__main__":
     step_width = in2pix(60)
     step_tread = in2pix(15)
-    step_rise = in2pix(8)
+    step_rise = in2pix(20)
 
     foot_dims = (in2pix(6), in2pix(10))
 
-    profile = simulate(step_tread, step_width, step_rise, foot_dims, 100, onepix_wear, np.array([0.2, 0.05, 0.05, 0.25, 0.2, 0.25, 200]))
+    profile = simulate(step_tread, step_width, step_rise, foot_dims, 50*365, apply_wear, np.array([0.39, 0.01, 0.09, 0.32, 0.02, 0.17, 60]))
+    plot_step_profile(profile)
 
-    profile2 = simulate(step_tread, step_width, step_rise, foot_dims, 100, onepix_wear, np.array([0.2, 0.05, 0.05, 0.25, 0.2, 0.25, 200]))
+    # profile2 = simulate(step_tread, step_width, step_rise, foot_dims, 100, onepix_wear, np.array([0.2, 0.05, 0.05, 0.25, 0.2, 0.25, 200]))
 
-    print(np.sum((profile - profile2)**2))
+    # print(np.sum((profile - profile2)**2))
 
-    profile_cat = np.concatenate((profile, profile2), axis=0)
-    plot_step_profile(profile_cat)
+    # profile_cat = np.concatenate((profile, profile2), axis=0)
+    # plot_step_profile(profile_cat)

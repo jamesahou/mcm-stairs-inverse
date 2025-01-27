@@ -13,7 +13,7 @@ def plot_step_profile(step_profile):
     ax.set_xlim(-step_profile_outlined.shape[1] // 2 + 20, step_profile_outlined.shape[1] // 2 + 20)
     ax.set_ylim(-10, step_profile_outlined.shape[1]+10)
     ax.invert_xaxis()
-    ax.set_zlim(0, np.max(step_profile_outlined)+10)
+    ax.set_zlim(0, step_profile_outlined.shape[1]+10)
     ax.plot_surface(xx, yy, step_profile_outlined ,rstride=1, cstride=1, cmap='viridis',
             linewidth=0)
     plt.show()
@@ -67,5 +67,5 @@ if __name__ == "__main__":
 
     print(np.sum((profile - profile2)**2))
 
-    profile_cat = np.concatenate((profile, profile2), axis=1)
+    profile_cat = np.concatenate((profile, profile2), axis=0)
     plot_step_profile(profile_cat)

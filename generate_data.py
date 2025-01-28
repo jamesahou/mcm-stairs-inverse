@@ -4,7 +4,7 @@ from wear_fn import apply_wear
 from utils import in2pix
 import time
 
-num_samples = 5
+num_samples = 1000
 
 step_width = in2pix(60)
 step_tread = in2pix(15)

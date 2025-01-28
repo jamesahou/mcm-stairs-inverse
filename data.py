@@ -8,17 +8,19 @@ class TrafficDataset(Dataset):
         self.profiles_dir = profiles_dir
         self.conditions_dir = conditions_dir
         self.transform = transform
-        self.indices = range(2000)  # Assuming 2000 samples
+        self.indices = range(972)  # Assuming 2000 samples
 
     def __len__(self):
         return len(self.indices)
 
     def __getitem__(self, idx):
-        profile_path = os.path.join(self.profiles_dir, f"{idx}.npy")
-        condition_path = os.path.join(self.conditions_dir, f"{idx}.npy")
+        profile_path = os.path.join(self.profiles_dir, f"profile_{idx}.npy")
+        condition_path = os.path.join(self.conditions_dir, f"conditions_{idx}.npy")
 
         profile = np.load(profile_path)
         condition = np.load(condition_path)
+
+        condition = condition[:-1]
 
         if self.transform:
             profile = self.transform(profile)
